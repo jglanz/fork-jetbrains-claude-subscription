@@ -4,7 +4,7 @@
 > or supported by JetBrains or Anthropic. It is not distributed on JetBrains Marketplace;
 > install it from the release zip below.
 
-A JetBrains plugin that adds a **Claude Subscription** agent to AI chat — one that
+A JetBrains and Android Studio plugin that adds a **Claude Subscription** agent to AI chat / BYOA — one that
 authenticates with a Claude.ai Pro/Max subscription instead of demanding Anthropic
 Console API billing.
 
@@ -15,7 +15,7 @@ Install it and the agent appears. There is nothing else to run.
 JetBrains launches its bundled Claude agent like this:
 
 ```text
-npx -y @agentclientprotocol/claude-agent-acp@0.62.0 --hide-claude-auth
+npx -y @agentclientprotocol/claude-agent-acp@0.100.0 --hide-claude-auth
 ```
 
 That flag does two things inside the package:
@@ -44,7 +44,7 @@ bundled entry.
 
 ## Requirements
 
-- A JetBrains IDE on the **262.\*** branch (2026.2) with the AI Assistant plugin.
+- A JetBrains IDE or Android Studio (Rabbit 2 or newer) on the **262.\*** branch (2026.2).
 - A Claude.ai Pro or Max subscription.
 - Node.js — but see below, one is usually already present.
 
@@ -81,7 +81,7 @@ watches for changes:
   "agent_servers": {
     "Claude Subscription": {
       "command": "<node>",
-      "args": ["<npx-cli.js>", "-y", "@agentclientprotocol/claude-agent-acp@0.62.0"],
+      "args": ["<npx-cli.js>", "-y", "@agentclientprotocol/claude-agent-acp@0.100.0"],
       "env": { "PATH": "<node bin>:<inherited PATH>" },
       "use_idea_mcp": true,
       "use_custom_mcp": true
@@ -105,7 +105,7 @@ Two findings drove the shape:
   path fails with `env: 'node': No such file or directory`. Hence the explicit `PATH`.
 - **The path is recomputed on every startup.** If no system node exists, the fallback is
   the runtime the IDE downloads for its own ACP agents
-  (`~/.cache/JetBrains/<IDE>/acp-agents/.runtimes/node/<version>/bin`). That path carries
+  (`~/.cache/{JetBrains,Google}/<IDE>/acp-agents/.runtimes/node/<version>/bin`). That path carries
   a version number, so freezing it would break on the next runtime update. The plugin
   re-resolves and rewrites only when the result actually changed.
 
@@ -120,7 +120,7 @@ State lives in `claude-subscription-acp.xml`:
 | --- | --- | --- |
 | `manageAgent` | `true` | Turn off to stop the plugin touching `acp.json` and manage the entry yourself. |
 | `displayName` | `Claude Subscription` | Also determines the agent id the IDE derives, and therefore icon matching. |
-| `packageSpec` | `@agentclientprotocol/claude-agent-acp@0.62.0` | Pinned deliberately — the guard being worked around lives in this package. |
+| `packageSpec` | `@agentclientprotocol/claude-agent-acp@0.100.0` | Pinned deliberately — the guard being worked around lives in this package. |
 
 Model, effort and permission mode are **not** managed here. They are ACP session config
 options that the IDE stores per agent id, so pick them once in the chat panel after the
@@ -128,10 +128,11 @@ agent appears.
 
 ## Known limits
 
-- **The icon uses internal API, and sits in every agent's icon path.** `acp.json` has no
-  icon field, so the icon comes from the AI Assistant extension point
-  `com.intellij.ml.llm.core.chat.ui.agentIconService` — internal, not a published
-  contract, hence the `262.*` build range.
+- **The icon uses internal API in JetBrains AI Assistant, and sits in every agent's icon path.** `acp.json` has no
+  icon field, so the icon in JetBrains IDEs comes from the AI Assistant extension point
+  `com.intellij.ml.llm.core.chat.ui.agentIconService` (registered via an optional dependency on `com.intellij.ml.llm`).
+  In Android Studio, where the JetBrains AI Assistant plugin is not present, the agent is registered and functions
+  normally without this extension point.
 
   Worth knowing how it behaves: icons resolve through
   `EP_NAME.extensionList.firstNotNullOf { it.loadIconForAgent(agentId) }`, but

@@ -29,8 +29,8 @@ dependencies {
 
     // `AgentIconService` lives in a module jar under the plugin's `lib/modules/`, which is
     // not on the classpath that `localPlugin` contributes. It is compileOnly by nature:
-    // the AI Assistant plugin supplies the class at runtime, and `plugin.xml` declares the
-    // dependency so the IDE refuses to load us without it.
+    // the AI Assistant plugin supplies the class at runtime, and `plugin.xml` declares an
+    // optional dependency so the extension is only loaded when AI Assistant is present.
     compileOnly(files(aiAssistantPath.map { "$it/lib/modules/intellij.ml.llm.chat.jar" }))
 }
 

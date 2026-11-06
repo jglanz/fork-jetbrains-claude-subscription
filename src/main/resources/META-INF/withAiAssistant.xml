@@ -1,0 +1,7 @@
+<idea-plugin>
+    <!-- Internal AI Assistant extension point; see ClaudeAgentIconService for why
+         order="first" matters. -->
+    <extensions defaultExtensionNs="com.intellij.ml.llm.core.chat.ui">
+        <agentIconService implementation="dev.vanssa.claudeacp.ClaudeAgentIconService" order="first"/>
+    </extensions>
+</idea-plugin>

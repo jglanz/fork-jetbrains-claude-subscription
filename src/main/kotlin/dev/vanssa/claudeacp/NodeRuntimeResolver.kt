@@ -51,12 +51,14 @@ object NodeRuntimeResolver {
             .reversed()
             .firstNotNullOfOrNull { runCatching { runtimeAt(it.resolve("bin")) }.getOrNull() }
 
-    /** Both locations are checked because the IDE cache moves on macOS. */
+    /** Locations for JetBrains and Google (Android Studio) caches on Linux and macOS. */
     private fun ideCacheRoots(): List<Path> {
         val home = Paths.get(System.getProperty("user.home"))
         return listOf(
             home.resolve(".cache/JetBrains"),
             home.resolve("Library/Caches/JetBrains"),
+            home.resolve(".cache/Google"),
+            home.resolve("Library/Caches/Google"),
         ).filter { it.isDirectory() }
     }
 

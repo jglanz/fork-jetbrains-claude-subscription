@@ -9,7 +9,7 @@
 # that single flag is the entire difference this plugin exists for.
 set -eu
 
-PACKAGE="${ACP_PACKAGE:-@agentclientprotocol/claude-agent-acp@0.62.0}"
+PACKAGE="${ACP_PACKAGE:-@agentclientprotocol/claude-agent-acp@0.100.0}"
 
 # 1. A system node wins; otherwise fall back to the runtime the IDE downloads for its
 #    own ACP agents (the only node present on some machines).
@@ -17,7 +17,9 @@ if command -v node >/dev/null 2>&1; then
     NODE_BIN=$(dirname "$(command -v node)")
 else
     NODE_BIN=$(ls -d "$HOME"/.cache/JetBrains/*/acp-agents/.runtimes/node/*/bin \
-        "$HOME"/Library/Caches/JetBrains/*/acp-agents/.runtimes/node/*/bin 2>/dev/null |
+        "$HOME"/Library/Caches/JetBrains/*/acp-agents/.runtimes/node/*/bin \
+        "$HOME"/.cache/Google/*/acp-agents/.runtimes/node/*/bin \
+        "$HOME"/Library/Caches/Google/*/acp-agents/.runtimes/node/*/bin 2>/dev/null |
         sort -V | tail -1)
 fi
 

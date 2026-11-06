@@ -5,5 +5,9 @@ out/
 .kotlin/
 .idea/
 *.iml
+gradle.local.properties
 local.properties
+
+# AI Excludes
 .claude
+.omc/
